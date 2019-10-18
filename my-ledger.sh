@@ -1,3 +1,4 @@
 #!/bin/bash
-# --price-db prices_db \
-node ledger.js  -f index.ledger "$@"
+# \
+node ledger.js --price-db prices_db \
+-f index.ledger "$@"

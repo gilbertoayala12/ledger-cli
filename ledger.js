@@ -3,10 +3,11 @@ const lineByLine = require('n-readlines');
 const colors = require('colors');
 const numeral = require('numeral');
 program
-  .option('-f, --file <filename>', 'filename')
+  .option('-f, --file <filename>', 'Filename')
   .option('-p, --print', 'add the specified type of regex')
-  .option('--price-db, --price_db <filename>', 'filename')
-  .option('register, register', 'show all transactions and a running total');
+  .option('--price-db, --price_db <filename>', 'passes the info to the program')
+  .option('register, register', 'show all transactions and a running total')
+  .option('balance, balance', 'find the balances of all of your accounts');
 program.parse(process.argv);
 
 const price_db = program.price_db;
@@ -26,7 +27,8 @@ function main() {
     register(transactions);
   }
   if (program.print) {
-    console.log('printea');
+    console.log(colors.rainbow('Printing'));
+    print(transactions);
   }
   //   register(transactions);
   //   console.log(transactions);
@@ -54,7 +56,9 @@ function handleFile(file, transactions) {
         transactions.push(transaction);
         let dateString = new Date(lineStr.split(' ')[0]);
         transaction.date = dateString; // TODO: format date correctly
-        transaction.description = lineStr.replace(dateString, '').trim();
+        transaction.description = lineStr
+          .replace(lineStr.split(' ')[0], '')
+          .trim();
       } else {
         // format line
         let posting = {};
@@ -91,13 +95,30 @@ function handleFile(file, transactions) {
   }
 }
 
+function print(transactions) {
+  let monies = [];
+  transactions.forEach(element => {
+    console.log(colors.blue(element.date), element.description);
+    element.postings.forEach(element => {
+      console.log('\t', element.Account);
+      if (element.price !== undefined) {
+        element.price < 0
+          ? console.log('\t', colors.red(element.price), element.commodity)
+          : console.log('\t', colors.green(element.price), element.commodity);
+      }
+    });
+  });
+}
 function register(transactions) {
   let monies = [];
   transactions.forEach(element => {
-    console.log(element.date, element.description);
+    console.log(colors.blue(element.date), element.description);
     element.postings.forEach(element => {
-      console.log(element.Account);
-      console.log(element.price, element.commodity);
+      console.log('\t', element.Account);
+      element.price < 0
+        ? console.log('\t', colors.red(element.price), element.commodity)
+        : console.log('\t', colors.green(element.price), element.commodity);
+      //   console.log(element.price, element.commodity);
       if (!(element.price in monies)) {
         monies[element.commodity] = 0;
       }

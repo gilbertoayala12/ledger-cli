@@ -1,34 +1,62 @@
 const program = require('commander');
-const lineReader = require('line-reader');
-const fs = require('fs');
+const lineByLine = require('n-readlines');
 program
   .option('-f, --file <filename>', 'filename')
-  .option('-p, --print [regex]', 'add the specified type of regex');
+  .option('-p, --print', 'add the specified type of regex');
 program.parse(process.argv);
 const fileName = program.file;
 const regex = program.regex;
+const rePttrn = /^\d{4}[\/.]\d{1,2}[\/.]\d{1,2}/;
 
 if (program.print !== undefined) {
   main();
 }
 
-const transactions = {};
-
-function handleFile(file) {
-  lineReader.eachLine(file, line => {
-    if (line.includes('!include')) {
-      handleFile(line.split(' ')[1]);
-    } else {
-      if (!line.includes(';')) {
-        console.log(line);
+function main() {
+  let transactions = [];
+  handleFile(fileName, transactions);
+  //   console.log(transactions);
+}
+function handleFile(file, transactions) {
+  const liner = new lineByLine(file);
+  let transaction;
+  while ((line = liner.next())) {
+    let lineStr = line.toString();
+    if (lineStr.includes('!include')) {
+      handleFile(lineStr.split(' ')[1], transactions);
+    }
+    if (!lineStr.includes(';') && !lineStr.includes('!')) {
+      //   console.log(lineStr);
+      if (lineStr.match(rePttrn)) {
+        transaction = {};
+        transactions.push(transaction);
+        let dateString = lineStr.split(' ')[0];
+        transaction.date = dateString; // TODO: format date correctly
+        transaction.description = lineStr.replace(dateString, '').trim();
+      } else {
+        /**
+         * TODO: Format postings because
+         *  {
+         *     Account: Bank:Paypal,
+         *     Price: 500, (maybe null)
+         *     Commodity: $
+         *  }
+         */
+        // format line
+        let posting = {};
+        let strFormat = lineStr.replace('\t', '');
+        console.log(strFormat);
+        // adds posting to transaction
+        if (transaction.postings) {
+          transaction.postings.push(posting);
+        } else {
+          transaction.postings = [posting];
+        }
       }
     }
-  });
+  }
 }
 
-function main() {
-  handleFile(fileName);
-}
 /**
  * Es leer el index y llamarlo recursivo para que se vaya leyendo
  * a los otros archivos

@@ -22,7 +22,7 @@ if (program.price_db !== undefined) {
 function main() {
   let transactions = [];
   handlePrices(price_db);
-  handleFile(fileName, transactions);
+  handleFile(fileName.replace('\r',''), transactions);
   if (program.register) {
     register(transactions);
   }
@@ -32,7 +32,7 @@ function main() {
   }
 }
 function handlePrices(file) {
-  const liner = new lineByLine(file);
+  const liner = new lineByLine(file.replace('\r',''));
   while ((line = liner.next())) {
     let lineStr = line.toString();
     if (lineStr.includes('N')) {
@@ -41,7 +41,7 @@ function handlePrices(file) {
   }
 }
 function handleFile(file, transactions) {
-  const liner = new lineByLine(file);
+  const liner = new lineByLine(file.replace('\r',''));
   let transaction;
   while ((line = liner.next())) {
     let lineStr = line.toString();
@@ -170,15 +170,23 @@ function print(transactions, regex, sort) {
 }
 function register(transactions) {
   let monies = [];
-  transactions.forEach(element => {
-    console.log(colors.blue(element.date), element.description);
-    element.postings.forEach(element => {
-      console.log('\t', element.Account);
-      if (element.price !== undefined) {
-        element.price < 0
-          ? console.log('\t', colors.red(element.price), element.commodity)
-          : console.log('\t', colors.green(element.price), element.commodity);
+  transactions.forEach(transaction => {
+    console.log(colors.blue(transaction.date), colors.yellow(transaction.description));
+    transaction.postings.forEach(posting => {
+      console.log('\t', posting.Account);
+      if (posting.price !== undefined) {
+        posting .price < 0
+          ? console.log('\t', colors.red(posting.price), posting.commodity)
+          : console.log('\t', colors.green(posting.price), posting.commodity);
+          
+        if(!(posting.commodity in monies)){
+          monies[posting.commodity]=0;
+        }
+        monies[posting.commodity]+=posting.price;
       }
+      //console.log(monies)
     });
   });
+  // format this shizzle
+  console.log(colors.yellow(monies))
 }

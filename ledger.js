@@ -4,7 +4,7 @@ const colors = require('colors');
 const numeral = require('numeral');
 program
   .option('-f, --file <filename>', 'Filename')
-  .option('-p, --print [regex]', 'add the specified type of regex')
+  .option('print, --print [regex]', 'add the specified type of regex')
   .option('--sort, --sort <d>', 'sort the given output', false)
   .option('--price-db, --price_db <filename>', 'passes the info to the program')
   .option('register, register', 'show all transactions and a running total')

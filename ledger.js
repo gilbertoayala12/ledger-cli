@@ -81,8 +81,6 @@ function handleFile(file, transactions) {
         } else {
           posting.Account = strArr[0];
         }
-        // console.log(posting);
-        // adds posting to transaction
         if (transaction.postings) {
           transaction.postings.push(posting);
         } else {
@@ -94,28 +92,34 @@ function handleFile(file, transactions) {
 }
 
 function print(transactions, regex, sort) {
+  let sortedTrans = transactions.sort(function(a, b) {
+    return a.date - b.date;
+  });
   if (sort) {
-    console.log(colors.red('Sorted'));
-    let sortedTrans = transactions.sort(function(a, b) {
-      return a.date - b.date;
-    });
+    console.log(colors.rainbow('sorted'));
     sortedTrans.forEach(element => {
-      if (element.description.match(regex)) {
-        console.log(colors.blue(element.date), element.description);
-        element.postings.forEach(element => {
-          console.log('\t', element.Account);
-          if (element.price !== undefined) {
-            element.price < 0
-              ? console.log('\t', colors.red(element.price), element.commodity)
-              : console.log(
-                  '\t',
-                  colors.green(element.price),
-                  element.commodity
-                );
-          }
-        });
-      }
-      if (regex) {
+      if (regex.length) {
+        if (element.description.includes(regex)) {
+          console.log(colors.blue('given regex', colors.green(regex)));
+          console.log(colors.blue(element.date), element.description);
+          element.postings.forEach(element => {
+            console.log('\t', element.Account);
+            if (element.price !== undefined) {
+              element.price < 0
+                ? console.log(
+                    '\t',
+                    colors.red(element.price),
+                    element.commodity
+                  )
+                : console.log(
+                    '\t',
+                    colors.green(element.price),
+                    element.commodity
+                  );
+            }
+          });
+        }
+      } else {
         console.log(colors.blue(element.date), element.description);
         element.postings.forEach(element => {
           console.log('\t', element.Account);
@@ -134,18 +138,24 @@ function print(transactions, regex, sort) {
     return;
   }
   transactions.forEach(element => {
-    if (element.description.match(regex)) {
-      console.log(colors.blue(element.date), element.description);
-      element.postings.forEach(element => {
-        console.log('\t', element.Account);
-        if (element.price !== undefined) {
-          element.price < 0
-            ? console.log('\t', colors.red(element.price), element.commodity)
-            : console.log('\t', colors.green(element.price), element.commodity);
-        }
-      });
-    }
-    if (regex) {
+    if (regex.length) {
+      if (element.description.includes(regex)) {
+        console.log(colors.blue('given regex', colors.green(regex)));
+        console.log(colors.blue(element.date), element.description);
+        element.postings.forEach(element => {
+          console.log('\t', element.Account);
+          if (element.price !== undefined) {
+            element.price < 0
+              ? console.log('\t', colors.red(element.price), element.commodity)
+              : console.log(
+                  '\t',
+                  colors.green(element.price),
+                  element.commodity
+                );
+          }
+        });
+      }
+    } else {
       console.log(colors.blue(element.date), element.description);
       element.postings.forEach(element => {
         console.log('\t', element.Account);

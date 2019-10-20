@@ -225,10 +225,37 @@ function balance(transactions){
     })
   })
 
+  tree.root.subAccounts.sort((a,b)=> {
+    if(a.account<b.account){
+      return -1;
+    }
+    if(a.account>b.account){
+      return 1;
+    }
+    return 0;
+  });
+  tree.root.subAccounts.forEach( child =>{
+    printAccount(child);
+  })
+  // console.log(tree.root.subAccounts);
+  // console.log(JSON.stringify(tree,null,2))
+}
+function printAccount(node){
+  // ternary operator for format color
+  Object.keys(node.priceBalance).forEach(key=>{
+    console.log(key,node.priceBalance[key]);
+  })
+  if(node.subAccounts.length===1){
+    console.log(node.account +':'+node.subAccounts[0].account);
 
+  }else{
 
-  
-  console.log(JSON.stringify(tree,null,2))
+    console.log(node.account);
+    node.subAccounts.forEach(subAccount => {
+      printAccount(subAccount);
+      
+    });
+  }
 }
 function register(transactions) {
   let monies = [];

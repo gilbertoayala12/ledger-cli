@@ -68,22 +68,29 @@ function handleFile(file, transactions) {
           .replace('\t', '')
           .split('\t')
           .filter(x => x.length > 1);
-        if (strArr.length === 2) {
-          const lenPrice = strArr[1].split(' ').length;
-          posting.Account = strArr[0];
-          if (lenPrice === 2) {
-            // btc or any currency at its right
-            let commodity = strArr[1].split(' ');
-            posting.price = parseFloat(commodity[0]);
-            posting.commodity = commodity[1];
-          } else {
-            // parsing price $300, -$300, $-400
-            let value = numeral(strArr[1]).value();
-            posting.price = value;
-            posting.commodity = defaultCommodity;
-          }
-        } else {
-          posting.Account = strArr[0];
+        
+
+
+        posting.Account = strArr[0];
+        if(strArr.length>1){
+          if (strArr.length === 2) {
+            const lenPrice = strArr[1].split(' ').length;
+            posting.Account = strArr[0];
+            if (lenPrice === 2) {
+              // btc or any currency at its right
+              let commodity = strArr[1].split(' ');
+              posting.price = parseFloat(commodity[0]);
+              posting.commodity = commodity[1];
+            } else {
+              // parsing price $300, -$300, $-400
+              let value = numeral(strArr[1]).value();
+              posting.price = value;
+              posting.commodity = defaultCommodity;
+            }
+          } 
+        }else{
+          posting.commodity = transaction.postings[0].commodity;
+          posting.price = -transaction.postings[0].price;
         }
         if (transaction.postings) {
           transaction.postings.push(posting);
@@ -176,35 +183,51 @@ function balance(transactions){
   let tree ={};
   let node = {};
   node.subAccounts=[];
+  node.priceBalance={};
   node.account='root';
   tree.root =node;
   let currentNode = tree.root;
   transactions.forEach(transaction =>{
     transaction.postings.forEach(posting=>{
+      if(!(posting.commodity in currentNode.priceBalance )){
+        currentNode.priceBalance[posting.commodity]=0;
+      }
+      currentNode.priceBalance[posting.commodity]+=posting.price
       posting.Account.split(':').forEach(account=>{
         let nextNode;
+        // Check if subaccount exists
           currentNode.subAccounts.forEach(subAccount =>{
             if(subAccount.account==account){
               nextNode = subAccount;
-
             }
           })
+
+
           if(nextNode){
             currentNode= nextNode;
           }else{
             let newNode ={};
             newNode.subAccounts=[];
+            newNode.priceBalance ={};
             newNode.account = account;
             currentNode.subAccounts.push(newNode);
             currentNode = newNode;
-
           }
+          
+          if(!(posting.commodity in currentNode.priceBalance )){
+            currentNode.priceBalance[posting.commodity]=0;
+          }
+          currentNode.priceBalance[posting.commodity]+=posting.price
 
 
       })
       currentNode = tree.root;
     })
   })
+
+
+
+  
   console.log(JSON.stringify(tree,null,2))
 }
 function register(transactions) {

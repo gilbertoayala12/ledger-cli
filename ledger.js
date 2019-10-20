@@ -30,6 +30,10 @@ function main() {
     console.log(colors.rainbow('Printing'));
     print(transactions, program.print, program.sort);
   }
+  if(program.balance){
+    console.log(colors.rainbow('Balance'));
+    balance(transactions);
+  }
 }
 function handlePrices(file) {
   const liner = new lineByLine(file.replace('\r',''));
@@ -168,6 +172,41 @@ function print(transactions, regex, sort) {
     }
   });
 }
+function balance(transactions){
+  let tree ={};
+  let node = {};
+  node.subAccounts=[];
+  node.account='root';
+  tree.root =node;
+  let currentNode = tree.root;
+  transactions.forEach(transaction =>{
+    transaction.postings.forEach(posting=>{
+      posting.Account.split(':').forEach(account=>{
+        let nextNode;
+          currentNode.subAccounts.forEach(subAccount =>{
+            if(subAccount.account==account){
+              nextNode = subAccount;
+
+            }
+          })
+          if(nextNode){
+            currentNode= nextNode;
+          }else{
+            let newNode ={};
+            newNode.subAccounts=[];
+            newNode.account = account;
+            currentNode.subAccounts.push(newNode);
+            currentNode = newNode;
+
+          }
+
+
+      })
+      currentNode = tree.root;
+    })
+  })
+  console.log(JSON.stringify(tree,null,2))
+}
 function register(transactions) {
   let monies = [];
   transactions.forEach(transaction => {
@@ -187,6 +226,6 @@ function register(transactions) {
       //console.log(monies)
     });
   });
-  // format this shizzle
+  // format this shizzle up this shizzle up 
   console.log(colors.yellow(monies))
 }

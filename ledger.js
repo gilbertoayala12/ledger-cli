@@ -295,6 +295,6 @@ function register(transactions) {
         monies[posting.commodity]+=posting.price;
       }
     });
+    console.log(colors.yellow(monies))
   });
-  console.log(colors.yellow(monies))
 }

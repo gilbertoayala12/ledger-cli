@@ -87,14 +87,14 @@ $ bash my-ledger.sh register
 $ bash my-ledger.sh balance
 
 ```
-#### Specify the file name
+### Specify the file name
 To run this you'll have to run it without the `.sh` file.
 ```
 
 $ node ledger.js --price-db prices_db -f <filename> <other commands>
 
 ```
-#### Specify your prices
+### Specify your prices
 To run this you'll have to run it without the `.sh` file.
 ```
 

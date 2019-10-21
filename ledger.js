@@ -283,11 +283,11 @@ function register(transactions) {
   transactions.forEach(transaction => {
     console.log(colors.blue(transaction.date), colors.yellow(transaction.description));
     transaction.postings.forEach(posting => {
-      console.log('\t', posting.Account);
+      console.log('\t\t\t\t\t', colors.blue(posting.Account));
       if (posting.price !== undefined) {
         posting .price < 0
-          ? console.log('\t', colors.red(posting.price), posting.commodity)
-          : console.log('\t', colors.green(posting.price), posting.commodity);
+          ? console.log('\t\t\t\t\t\t\t\t\t\t\t', colors.red(posting.price), posting.commodity)
+          : console.log('\t\t\t\t\t\t\t\t\t\t\t', colors.green(posting.price), posting.commodity);
           
         if(!(posting.commodity in monies)){
           monies[posting.commodity]=0;
@@ -295,6 +295,6 @@ function register(transactions) {
         monies[posting.commodity]+=posting.price;
       }
     });
-    console.log(colors.yellow(monies))
+    console.log(colors.cyan('\t\t\t\t\t\t\t',monies))
   });
 }

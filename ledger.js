@@ -239,7 +239,7 @@ function balance(transactions){
   })
   console.log(colors.rainbow('--------------------------'))
   console.log(tree.root.priceBalance);
-  // console.log(JSON.stringify(tree,null,2))
+  
 }
 function printAccount(node){
   // ternary operator for format color
@@ -294,9 +294,7 @@ function register(transactions) {
         }
         monies[posting.commodity]+=posting.price;
       }
-      //console.log(monies)
     });
   });
-  // format this shizzle up this shizzle up 
   console.log(colors.yellow(monies))
 }

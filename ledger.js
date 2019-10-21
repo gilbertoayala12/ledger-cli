@@ -237,25 +237,46 @@ function balance(transactions){
   tree.root.subAccounts.forEach( child =>{
     printAccount(child);
   })
-  // console.log(tree.root.subAccounts);
+  console.log(colors.rainbow('--------------------------'))
+  console.log(tree.root.priceBalance);
   // console.log(JSON.stringify(tree,null,2))
 }
 function printAccount(node){
   // ternary operator for format color
-  Object.keys(node.priceBalance).forEach(key=>{
-    console.log(key,node.priceBalance[key]);
-  })
+  for(let i = 0; i < Object.keys(node.priceBalance).length;i++){
+    let key = Object.keys(node.priceBalance)[i]
+    let value = node.priceBalance[key]
+    //ternary operator
+    let strKey = `\t${key}`
+    let strValue = `${numeral(value).format('0.00')}\t`;
+    if(value < 0){
+      if(i==Object.keys(node.priceBalance).length-1){
+        process.stdout.write(colors.red(strKey +strValue));
+      }else{
+        console.log(colors.red(strKey +strValue));
+      }
+    }else{
+
+      if(i==Object.keys(node.priceBalance).length-1){
+        process.stdout.write(colors.green(strKey +strValue));
+      }else{
+        console.log(colors.green(strKey + strValue));
+      }
+    }
+  }
+ 
+
   if(node.subAccounts.length===1){
     console.log(node.account +':'+node.subAccounts[0].account);
 
   }else{
-
     console.log(node.account);
     node.subAccounts.forEach(subAccount => {
       printAccount(subAccount);
       
     });
   }
+  
 }
 function register(transactions) {
   let monies = [];

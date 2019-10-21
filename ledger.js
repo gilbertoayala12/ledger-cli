@@ -247,7 +247,7 @@ function printAccount(node){
     let key = Object.keys(node.priceBalance)[i]
     let value = node.priceBalance[key]
     //ternary operator
-    let strKey = `\t${key}`
+    let strKey = `\t${key} `
     let strValue = `${numeral(value).format('0.00')}\t`;
     if(value < 0){
       if(i==Object.keys(node.priceBalance).length-1){

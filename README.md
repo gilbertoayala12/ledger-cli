@@ -72,7 +72,7 @@ $ bash my-ledger.sh print [regex]
 ### Sort the given output by date
 ```
 
-$ bash my-ledger.sh --sort <d> 
+$ bash my-ledger.sh [print] [regex] --sort <d> 
 
 ```
 ### Show all transactions and a running total
